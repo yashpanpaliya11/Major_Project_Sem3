@@ -10,12 +10,13 @@ import { formatDateTime } from '../../utils/helpers';
 export default function AttendanceHistory() {
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [statusFilter, setStatusFilter] = useState('ALL');
 
   useEffect(() => {
     async function fetchHistory() {
       try {
         const res = await api.get('/student/history');
-        setRecords(res.data.records);
+        setRecords(res.data.records || []);
       } catch {
         toast.error('Failed to load attendance history');
       } finally {
@@ -82,6 +83,10 @@ export default function AttendanceHistory() {
     },
   ];
 
+  const filteredRecords = statusFilter === 'ALL'
+    ? records
+    : records.filter((record) => record.status === statusFilter);
+
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
       <div>
@@ -94,14 +99,39 @@ export default function AttendanceHistory() {
         </p>
       </div>
 
+      {!loading && (
+        <div className="flex flex-wrap items-center gap-3">
+          <label htmlFor="attendance-status" className="text-sm font-semibold text-sky-900">
+            Status
+          </label>
+          <select
+            id="attendance-status"
+            value={statusFilter}
+            onChange={(event) => setStatusFilter(event.target.value)}
+            className="rounded-xl border border-sky-200 bg-white px-3 py-2 text-sm text-sky-900 focus:outline-none focus:ring-2 focus:ring-sky-400/30"
+          >
+            <option value="ALL">All records</option>
+            <option value="PRESENT">Present</option>
+            <option value="LATE">Late</option>
+            <option value="ABSENT">Absent</option>
+            <option value="FLAGGED_PROXY">Flagged</option>
+          </select>
+          <span className="text-xs text-sky-600" aria-live="polite">
+            {filteredRecords.length} of {records.length} records
+          </span>
+        </div>
+      )}
+
       {loading ? (
         <LoadingSpinner size="lg" text="Retrieving attendance ledger..." />
       ) : (
         <DataTable
           columns={columns}
-          data={records}
+          data={filteredRecords}
           searchPlaceholder="Search history by course code..."
-          emptyMessage="No historical records found for this account"
+          emptyMessage={statusFilter === 'ALL'
+            ? 'No historical records found for this account'
+            : 'No records match this status'}
         />
       )}
     </div>
