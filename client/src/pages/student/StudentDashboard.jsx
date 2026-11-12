@@ -23,6 +23,7 @@ export default function StudentDashboard() {
   const navigate = useNavigate();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [courseSearch, setCourseSearch] = useState("");
 
   useEffect(() => {
     async function fetchDashboard() {
@@ -44,6 +45,11 @@ export default function StudentDashboard() {
 
   const { overallStats, courseStats, recentRecords, hasActiveSession } = data || {};
   const hasOverallData = (overallStats?.totalSessions || 0) > 0;
+  const visibleCourses = (courseStats || []).filter((course) =>
+    `${course.code} ${course.name} ${course.facultyName}`
+      .toLowerCase()
+      .includes(courseSearch.trim().toLowerCase())
+  );
 
   return (
     <div className="space-y-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -135,7 +141,7 @@ export default function StudentDashboard() {
       {/* Course Breakdown + Donut */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 card p-6 space-y-5">
-          <div className="flex items-center justify-between pb-3 border-b border-sky-100">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 border-b border-sky-100">
             <h3 className="text-base font-bold text-sky-950 flex items-center gap-2">
               <BookOpen className="w-4 h-4 text-sky-500" />
               Subject Turnout
@@ -144,8 +150,18 @@ export default function StudentDashboard() {
               Mandatory threshold: 75%
             </span>
           </div>
+          {courseStats?.length > 3 && (
+            <input
+              type="search"
+              value={courseSearch}
+              onChange={(event) => setCourseSearch(event.target.value)}
+              placeholder="Filter by course, code, or faculty..."
+              aria-label="Filter enrolled courses"
+              className="w-full rounded-xl border border-sky-200 bg-white px-3 py-2 text-sm text-sky-900 placeholder:text-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-400/30"
+            />
+          )}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {courseStats?.map((c) => {
+            {visibleCourses.map((c) => {
               const hasLectures = c.totalSessions > 0;
               const isAtRisk = hasLectures && c.percentage < 75;
               return (
@@ -206,6 +222,9 @@ export default function StudentDashboard() {
               );
             })}
           </div>
+          {visibleCourses.length === 0 && courseStats?.length > 0 && (
+            <p className="py-6 text-center text-sm text-sky-600">No courses match “{courseSearch}”.</p>
+          )}
         </div>
 
         {/* Attendance Composition Donut */}
