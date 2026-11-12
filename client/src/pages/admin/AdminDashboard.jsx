@@ -8,8 +8,7 @@ import {
   TrendingUp,
   AlertTriangle,
   Activity,
-  Eye,
-  Users as UsersIcon,
+  Download,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import api from "../../api/axios";
@@ -20,6 +19,29 @@ import DepartmentComparisonChart from "../../components/charts/DepartmentCompari
 import AttendanceDonutChart from "../../components/charts/AttendanceDonutChart";
 import Badge from "../../components/common/Badge";
 import { formatDateTime } from "../../utils/helpers";
+
+function exportDepartmentReport(departments) {
+  const escapeCell = (value) => {
+    const text = String(value ?? "");
+    const safeText = /^[\s]*[=+\-@]/.test(text) ? `'${text}` : text;
+    return `"${safeText.replaceAll('"', '""')}"`;
+  };
+  const rows = [
+    ["Department", "Students", "Courses", "Attendance rate (%)", "At-risk students"],
+    ...departments.map(({ department, students, courses, attendanceRate, riskCount }) => [
+      department, students, courses, attendanceRate, riskCount,
+    ]),
+  ];
+  const csv = "\uFEFF" + rows.map((row) => row.map(escapeCell).join(",")).join("\r\n");
+  const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `department-attendance-${new Date().toISOString().slice(0, 10)}.csv`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
 
 export default function AdminDashboard() {
   const [data, setData] = useState(null);
@@ -133,10 +155,21 @@ export default function AdminDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="card-hover">
           <div className="p-5 border-b border-sky-100">
-            <h4 className="text-base font-bold text-sky-950 flex items-center gap-2">
-              <Layers className="w-4 h-4 text-sky-500" />
-              Department Turnout Comparison
-            </h4>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <h4 className="text-base font-bold text-sky-950 flex items-center gap-2">
+                <Layers className="w-4 h-4 text-sky-500" />
+                Department Turnout Comparison
+              </h4>
+              <button
+                type="button"
+                onClick={() => exportDepartmentReport(deptComparison)}
+                disabled={!deptComparison?.length}
+                className="inline-flex items-center gap-1.5 text-xs font-bold text-sky-600 hover:text-sky-800 disabled:text-sky-300 disabled:cursor-not-allowed"
+              >
+                <Download className="w-4 h-4" />
+                Export CSV
+              </button>
+            </div>
             <p className="text-xs text-sky-600/90 font-medium mt-1">
               Mean attendance percentages by academic division.
             </p>
