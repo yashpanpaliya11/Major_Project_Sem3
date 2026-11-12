@@ -1,0 +1,143 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  ADMIN
+  FACULTY
+  STUDENT
+}
+
+enum SessionType {
+  IN_PERSON
+  ONLINE
+  HYBRID
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  FLAGGED_PROXY
+}
+
+model User {
+  id            String       @id @default(uuid())
+  name          String
+  email         String       @unique
+  passwordHash  String
+  role          Role         @default(STUDENT)
+  department    String?
+  rollNumber    String?      @unique
+  avatarUrl     String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  taughtCourses Course[]     @relation("FacultyCourses")
+  enrollments   Enrollment[]
+  records       AttendanceRecord[]
+  proxyLogs     ProxyAlert[]
+  notifications Notification[]
+
+  @@index([role])
+  @@index([department])
+}
+
+model Course {
+  id          String       @id @default(uuid())
+  code        String       @unique
+  name        String
+  department  String
+  facultyId   String
+  faculty     User         @relation("FacultyCourses", fields: [facultyId], references: [id], onDelete: Restrict)
+  sessions    LectureSession[]
+  enrollments Enrollment[]
+
+  @@index([facultyId])
+  @@index([department])
+}
+
+model Enrollment {
+  id        String   @id @default(uuid())
+  studentId String
+  courseId  String
+  student   User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, courseId])
+  @@index([courseId])
+}
+
+model LectureSession {
+  id            String             @id @default(uuid())
+  courseId      String
+  course        Course             @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  startTime     DateTime           @default(now())
+  endTime       DateTime?
+  sessionType   SessionType        @default(IN_PERSON)
+  activeQrToken String?
+  latitude      Float?
+  longitude     Float?
+  radiusMeters  Float              @default(50.0)
+  records       AttendanceRecord[]
+  proxyAlerts   ProxyAlert[]
+
+  @@index([courseId, startTime])
+  @@index([endTime])
+}
+
+model AttendanceRecord {
+  id          String           @id @default(uuid())
+  sessionId   String
+  studentId   String
+  session     LectureSession   @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  student     User             @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  timestamp   DateTime         @default(now())
+  status      AttendanceStatus @default(PRESENT)
+  method      String
+  ipAddress   String?
+  deviceInfo  String?
+
+  // One attendance outcome per student per lecture. This makes duplicate
+  // check-ins impossible even under concurrent requests.
+  @@unique([sessionId, studentId])
+  @@index([studentId, timestamp])
+  @@index([status])
+  @@index([timestamp])
+}
+
+model ProxyAlert {
+  id          String         @id @default(uuid())
+  sessionId   String
+  studentId   String
+  session     LectureSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  student     User           @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  reason      String
+  flaggedAt   DateTime       @default(now())
+  resolved    Boolean        @default(false)
+
+  // A student can only have one open incident per lecture; repeat attempts
+  // update the existing alert rather than flooding the admin feed.
+  @@unique([sessionId, studentId])
+  @@index([resolved, flaggedAt])
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  message   String
+  type      String   @default("WARNING") // "WARNING" | "INFO" | "CRITICAL" | "ENGAGEMENT"
+  emailUrl  String?
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([userId, read])
+  @@index([createdAt])
+}

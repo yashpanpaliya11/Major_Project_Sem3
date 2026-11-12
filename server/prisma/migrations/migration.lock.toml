@@ -1,0 +1,11 @@
+[[migrations]]
+  folder = "migrations"
+  isMigration = true
+  version = "1_initial_schema"
+  providers = ["oracle", "mysql", "mongodb", "postgresql", "sqlite", "sqlserver"]
+
+[[migrations]]
+  folder = "migrations"
+  isMigration = true
+  version = "2_schema_prisma_v2"
+  providers = ["postgresql"]
