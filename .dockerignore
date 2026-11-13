@@ -1,0 +1,11 @@
+.git
+**/node_modules
+**/dist
+**/.env
+**/.env.*.local
+*.pdf
+*.zip
+work
+outputs
+part_*
+commit*.txt
