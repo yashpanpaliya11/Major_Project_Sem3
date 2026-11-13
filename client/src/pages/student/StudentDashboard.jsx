@@ -222,6 +222,12 @@ export default function StudentDashboard() {
               );
             })}
           </div>
+          {courseStats?.length === 0 && (
+            <div className="rounded-xl border border-dashed border-sky-200 bg-sky-50 p-6 text-center">
+              <p className="text-sm font-semibold text-sky-900">No courses enrolled yet</p>
+              <p className="mt-1 text-xs text-sky-600">Your courses will appear here after an administrator enrolls you.</p>
+            </div>
+          )}
           {visibleCourses.length === 0 && courseStats?.length > 0 && (
             <p className="py-6 text-center text-sm text-sky-600">No courses match “{courseSearch}”.</p>
           )}
