@@ -1,0 +1,125 @@
+{
+  "base": "ashmitsahu1812/major_ad_pro@b8a408d466ac1c86ec00e37de50f3aacf91cbce9",
+  "files": [
+    {
+      "path": ".dockerignore",
+      "sha256": "536ff82213b418f891381e3a231b4ee08df3bbe0b254f16ac556056e801890b7"
+    },
+    {
+      "path": ".env.example",
+      "sha256": "979f8b9482dfd05b6a2ff1c8fedda01121ac9bca9741206454a55f6e591479e5"
+    },
+    {
+      "path": ".gitignore",
+      "sha256": "60618db2c871982a628ccb99540b6a3ff09d06ea1373b34d09d16f621ee4fbcc"
+    },
+    {
+      "path": "Dockerfile",
+      "sha256": "0c469bec083d6e2bfd08800b8f9734115114ee6c62ee3d8c80f218cf41caf978"
+    },
+    {
+      "path": "INTEGRATION_NOTES.md",
+      "sha256": "18a028183d369715492de7dfb98467dc3484e64e899de9b8315dba8a86c0d0ab"
+    },
+    {
+      "path": "PROJECT_MAP.md",
+      "sha256": "d1f562d85c5dde173a7367156a49a29f0170f69f9cb8c0e60c0ab7e80b0cecb5"
+    },
+    {
+      "path": "README.md",
+      "sha256": "c80c7234401a84408e19aedb37b88ee5acb658c42dd2d27833c72e57d782fac7"
+    },
+    {
+      "path": "firebase.json",
+      "sha256": "e87125f3ec6439a59ba44d80a6dcc46378a27a0644b0cda30abeafd2efb67e20"
+    },
+    {
+      "path": "firestore.rules",
+      "sha256": "ec962049f470c4d99b1634ae4c66631525f390f180bba7dd60664cfedc782867"
+    },
+    {
+      "path": "index.html",
+      "sha256": "947687ca45b529a8ed8d592722fba372172d2dd69b148dd07c442f7d6b9e269f"
+    },
+    {
+      "path": "index.js",
+      "sha256": "455b476faeef7d1ff795a64f58d627e82e6877407c66b1dec511b2320d56efde"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "3c201ef8c4f316a580cbe2d7510432d8cbd7a149de6f581b354ddde1a7caaeb6"
+    },
+    {
+      "path": "package.json",
+      "sha256": "3d3f610875d181891df70a80ea58b1eac15e58840a3d13d1b97396e394ac22a4"
+    },
+    {
+      "path": "public/assets/index-BAw29P-Q.css",
+      "sha256": "2d48050cb97ad44a2e3a0157f951998896b0dec637817915c4adfd597f4aacc5"
+    },
+    {
+      "path": "public/assets/index-CfU-5Vyu.js",
+      "sha256": "aeac6f12c91c177bd8e57276879211ada6afd8136b09e900dbc444c53a991633"
+    },
+    {
+      "path": "public/index.html",
+      "sha256": "b8d00525093820265bc65ce01ca89e2e0330f9b7d37071a5cf310603e68be650"
+    },
+    {
+      "path": "scripts/migrate-firestore-to-postgres.js",
+      "sha256": "fca3ad7e13aeca46ee12ad5af4ae11a847e78e5b6e09a0be0d51339977f226d3"
+    },
+    {
+      "path": "server/database.js",
+      "sha256": "2df40aa53d90c22889f88b9efed750f9e280d446604cc99d600cc609844cdaf2"
+    },
+    {
+      "path": "server/firebase-admin.js",
+      "sha256": "c09cbad5ba7cd0265e7ff87556670a6a9b2b0a437bb6328b5182270fe2840ebf"
+    },
+    {
+      "path": "server/firestore-store.js",
+      "sha256": "0a9327b4ee87746b0c1dddb845a3e73bd7edc100e8371fb5eec6fa537ecff2cd"
+    },
+    {
+      "path": "server/index.js",
+      "sha256": "f3aa3dcec127b758299ece506048f992b556572b11535ae5bc3964604edf5392"
+    },
+    {
+      "path": "server/postgres-store.js",
+      "sha256": "149402865cb82ddb2d387d7ec6378c1a54bf7df43b46eda860d38bd0ca0bdfb8"
+    },
+    {
+      "path": "src/App.jsx",
+      "sha256": "7b0115d7dec3d8ea9eaaa13a88d69c5ccde567cd82f9fd3d0279566e95e1dc83"
+    },
+    {
+      "path": "src/StudentCheckIn.jsx",
+      "sha256": "1c9aca0df290b4bca9ae07456b3a2d179c791ebfe99b126641840c1e38707700"
+    },
+    {
+      "path": "src/api.js",
+      "sha256": "331831b02d4252813bc4913e9ea9835365c80e7b04b84455708d0e950ccc7419"
+    },
+    {
+      "path": "src/firebase.js",
+      "sha256": "3b4ecf06b14e2139200ebd2a6d1519fabed8f839d5a31108d693197e96db2d80"
+    },
+    {
+      "path": "src/main.jsx",
+      "sha256": "3a9d309404bfdcf17e57a0e4a7dd29880acad92310e3280bd937bcb7d8ad528d"
+    },
+    {
+      "path": "src/style.css",
+      "sha256": "dd7430d8bfdab063772bae6d6a77fc74adcb1aeeba5b540b16c9b522fb405a96"
+    },
+    {
+      "path": "vercel.json",
+      "sha256": "18c25be44eb2282574a930599da2649d631d5cfb78601dd2186777dc115f7c34"
+    },
+    {
+      "path": "vite.config.js",
+      "sha256": "9fe96be90be7af45e94ae07177b2e5e26757eae67b6cd569209dbe20928705da"
+    }
+  ]
+}
