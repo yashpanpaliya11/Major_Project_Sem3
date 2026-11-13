@@ -164,6 +164,9 @@ export default function StudentDashboard() {
             {visibleCourses.map((c) => {
               const hasLectures = c.totalSessions > 0;
               const isAtRisk = hasLectures && c.percentage < 75;
+              const classesToRecover = isAtRisk
+                ? Math.max(0, Math.ceil(3 * c.totalSessions - 4 * (c.present + c.late)))
+                : 0;
               return (
                 <div
                   key={c.courseId}
@@ -217,6 +220,11 @@ export default function StudentDashboard() {
                         }}
                       />
                     </div>
+                    {classesToRecover > 0 && (
+                      <p className="text-xs font-medium text-rose-700">
+                        Attend the next {classesToRecover} {classesToRecover === 1 ? "class" : "classes"} to reach 75%.
+                      </p>
+                    )}
                   </div>
                 </div>
               );
