@@ -78,7 +78,7 @@ export default function DashboardLayout() {
           </div>
 
           <div className="flex items-center gap-3">
-            <NotificationBell />
+            {user?.role === "STUDENT" && <NotificationBell />}
 
             <div className="text-right hidden sm:block">
               <p className="text-sm font-bold text-sky-950 leading-tight">{user?.name}</p>
@@ -100,7 +100,7 @@ export default function DashboardLayout() {
         <main className="flex-1 overflow-y-auto p-4 lg:p-8 bg-slate-50/70">
           <Outlet />
         </main>
-        <EngagementPrompt />
+        {user?.role === "STUDENT" && <EngagementPrompt />}
       </div>
     </div>
   );
