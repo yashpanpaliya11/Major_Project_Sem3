@@ -1,4 +1,5 @@
 # Smart College Attendance
+https://major-project-sem3.vercel.app/
 
 React, Tailwind, and Express attendance app with Google faculty sign-in, student check-in, CSV roster tools, geofencing, attendance history, and an audit log. Local development uses SQLite in `data/attendance.sqlite`. Production can use managed PostgreSQL by setting `DATABASE_URL`; Firebase Authentication remains the faculty sign-in provider.
 
