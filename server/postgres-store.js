@@ -217,7 +217,7 @@ export async function markAll(status, actor) {
       await client.query(`UPDATE students s SET today=COALESCE((SELECT status FROM attendance_records a WHERE a.student_id=s.id AND a.attendance_date=$1),'unmarked')`, [date])
     } else {
       const students = await client.query('SELECT id FROM students')
-      for (const student of students.rows) await recordAttendance(client, student.id, 'present', actor?.id)
+      for (const student of students.rows) await recordAttendance(client, student.id, status, actor?.id)
     }
   })
   await addAudit(actor, 'attendance.marked_all', 'attendance', null, { status })

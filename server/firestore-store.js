@@ -177,7 +177,7 @@ export async function markAllCloud(status) {
   const students = await db.collection('students').get()
   for (const student of students.docs) {
     if (status === 'unmarked') await patchStudentCloud(student.id, { today: 'unmarked' })
-    else await changeAttendance(student.id, 'present', 'manual')
+    else await changeAttendance(student.id, status, 'manual')
   }
 }
 

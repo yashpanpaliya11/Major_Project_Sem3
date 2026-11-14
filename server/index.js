@@ -353,7 +353,7 @@ app.post('/api/students/import', async (request, response) => {
 })
 app.post('/api/attendance/mark-all', async (request, response) => {
   const { today } = request.body || {}
-  if (!['present', 'unmarked'].includes(today)) return sendError(response, 400, 'Invalid attendance status.')
+  if (!['present', 'absent', 'unmarked'].includes(today)) return sendError(response, 400, 'Invalid attendance status.')
   if (useFirestore) {
     try {
       await cloud.markAllCloud(today)
@@ -364,7 +364,7 @@ app.post('/api/attendance/mark-all', async (request, response) => {
   if (postgresEnabled) return response.json({ students: await pg.markAll(today, request.user) })
   const tx = database.transaction(() => {
     if (today === 'unmarked') database.prepare('DELETE FROM attendance_records WHERE attendance_date = ? AND source = ?').run(localDate(), 'manual')
-    else for (const student of database.prepare('SELECT id FROM students').all()) recordAttendance(student.id, 'present', request.user.id)
+    else for (const student of database.prepare('SELECT id FROM students').all()) recordAttendance(student.id, today, request.user.id)
   })
   tx()
   writeAudit(request.user.id, 'attendance.marked_all', 'attendance', null, { status: today })
