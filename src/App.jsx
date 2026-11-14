@@ -420,6 +420,26 @@ function FacultyDashboard({ user, firebaseMode, onLogout }) {
     setToast('Department report exported as CSV.')
   }
 
+  function exportAtRiskCsv() {
+    const headers = ['name', 'roll', 'department', 'attendance_percent', 'risk_level', 'follow_up_noted']
+    const rows = atRiskStudents.map((student) => [
+      student.name,
+      student.roll,
+      student.department,
+      student.percentage,
+      student.percentage < 65 ? 'critical' : 'watch',
+      student.notified,
+    ])
+    const contents = '\uFEFF' + [headers, ...rows].map((row) => row.map(csvCell).join(',')).join('\r\n')
+    const url = URL.createObjectURL(new Blob([contents], { type: 'text/csv;charset=utf-8' }))
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `at-risk-attendance-${new Date().toISOString().slice(0, 10)}.csv`
+    link.click()
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000)
+    setToast('At-risk attendance report exported as CSV.')
+  }
+
   async function importStudentsCsv(event) {
     const file = event.target.files?.[0]
     event.target.value = ''
@@ -598,7 +618,7 @@ function FacultyDashboard({ user, firebaseMode, onLogout }) {
 
           {activeTab === 'reports' && <section className="animate-rise space-y-5">
             <div className="grid gap-3 sm:grid-cols-3"><div className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm"><p className="text-xs text-slate-500">Chronically absent</p><p className="mt-1 text-2xl font-semibold text-rose-700">{chronicStudents.length}</p><p className="mt-1 text-[10px] text-slate-400">Below 65% attendance</p></div><div className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm"><p className="text-xs text-slate-500">Watch list</p><p className="mt-1 text-2xl font-semibold text-amber-700">{watchStudents.length}</p><p className="mt-1 text-[10px] text-slate-400">Between 65% and 74%</p></div><div className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm"><p className="text-xs text-slate-500">At-risk total</p><p className="mt-1 text-2xl font-semibold text-slate-900">{atRiskStudents.length}</p><p className="mt-1 text-[10px] text-slate-400">Below 75% attendance</p></div></div>
-            <article className="rounded-2xl border border-rose-100 bg-gradient-to-br from-rose-50 to-white p-5 sm:p-6"><div className="flex flex-wrap items-center justify-between gap-4"><div className="flex items-start gap-3"><span className="grid size-10 shrink-0 place-items-center rounded-xl bg-rose-100 text-rose-700"><CircleAlert size={19} /></span><div><h2 className="text-base font-semibold text-slate-900">Early intervention recommended</h2><p className="mt-1 max-w-2xl text-xs leading-5 text-slate-600">These students have attendance below 65%. Consider a faculty check-in to understand what support they need.</p></div></div><button type="button" onClick={markAllNotified} disabled={!chronicStudents.some((student) => !student.notified)} className="rounded-xl bg-rose-600 px-4 py-2.5 text-xs font-semibold text-white transition hover:bg-rose-700 disabled:cursor-not-allowed disabled:opacity-50">Mark all for follow-up</button></div></article>
+            <article className="rounded-2xl border border-rose-100 bg-gradient-to-br from-rose-50 to-white p-5 sm:p-6"><div className="flex flex-wrap items-center justify-between gap-4"><div className="flex items-start gap-3"><span className="grid size-10 shrink-0 place-items-center rounded-xl bg-rose-100 text-rose-700"><CircleAlert size={19} /></span><div><h2 className="text-base font-semibold text-slate-900">Early intervention recommended</h2><p className="mt-1 max-w-2xl text-xs leading-5 text-slate-600">These students have attendance below 65%. Consider a faculty check-in to understand what support they need.</p></div></div><div className="flex flex-wrap gap-2"><button type="button" onClick={exportAtRiskCsv} disabled={atRiskStudents.length === 0} className="inline-flex items-center gap-1.5 rounded-xl border border-rose-200 bg-white px-4 py-2.5 text-xs font-semibold text-rose-700 transition hover:bg-rose-50 disabled:cursor-not-allowed disabled:opacity-50"><Download size={14} />Export at-risk CSV</button><button type="button" onClick={markAllNotified} disabled={!chronicStudents.some((student) => !student.notified)} className="rounded-xl bg-rose-600 px-4 py-2.5 text-xs font-semibold text-white transition hover:bg-rose-700 disabled:cursor-not-allowed disabled:opacity-50">Mark all for follow-up</button></div></div></article>
             <article className="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm shadow-slate-200/30"><div className="flex items-center justify-between px-5 py-5"><div><h2 className="text-sm font-semibold text-slate-900">Chronic absence list</h2><p className="mt-1 text-[11px] text-slate-500">Sorted by lowest attendance first</p></div><span className="rounded-lg bg-rose-50 px-2.5 py-1 text-[10px] font-semibold text-rose-700">{chronicStudents.length} students</span></div><div>{chronicStudents.map((student) => <div key={student.id} className="flex flex-wrap items-center gap-3 border-t border-slate-100 px-5 py-3.5"><Avatar name={student.name} size="small" /><div className="min-w-36 flex-1"><p className="text-xs font-semibold text-slate-800">{student.name}</p><p className="mt-1 text-[10px] text-slate-400">{student.roll} <span className="px-1">·</span>{student.department}</p></div><div className="flex items-center gap-2"><div className="h-1.5 w-16 overflow-hidden rounded-full bg-slate-100"><div className="h-full rounded-full bg-rose-500" style={{ width: `${student.percentage}%` }} /></div><span className="w-8 text-right text-xs font-bold text-rose-700">{student.percentage}%</span></div><button type="button" onClick={() => markNotified(student.id)} disabled={student.notified} className={`ml-auto inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-[10px] font-semibold transition ${student.notified ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-600 hover:bg-indigo-50 hover:text-indigo-700'}`}>{student.notified ? <><Check size={13} />Follow-up noted</> : 'Mark for follow-up'}</button></div>)}{chronicStudents.length === 0 && <EmptyState icon={ShieldCheck} title="No students below 65%" detail="There are no chronic absence cases right now." />}</div></article>
             <article className="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm shadow-slate-200/30"><div className="px-5 pt-5"><SectionHeading title="Watch list" detail="Students approaching the attendance threshold" /></div>{watchStudents.length ? watchStudents.map((student) => <StudentRow key={student.id} student={student} compact />) : <p className="px-5 pb-5 text-xs text-slate-400">No students currently on the watch list.</p>}</article>
             <p className="flex items-center gap-2 text-[10px] text-slate-400"><Clock3 size={13} />Follow-up markers are saved in this browser. This demo does not send messages.</p>
