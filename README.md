@@ -3,6 +3,11 @@ https://major-project-sem3.vercel.app/
 
 React, Tailwind, and Express attendance app with Google faculty sign-in, student check-in, CSV roster tools, geofencing, attendance history, and an audit log. Local development uses SQLite in `data/attendance.sqlite`. Production can use managed PostgreSQL by setting `DATABASE_URL`; Firebase Authentication remains the faculty sign-in provider.
 
+
+## Data Engineering submission
+
+See [`DE/README.md`](DE/README.md) for the database model, normalization, runnable PostgreSQL schema, synthetic sample data, ten project queries with captured outputs, and backend integration notes.
+
 ## Run locally
 
 Requirements: Node.js 24.12+.
